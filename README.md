@@ -37,7 +37,7 @@ Additional steps if you would like to run scripts, unit tests or edit the projec
 | `--view-pattern` | `-p` |  `**/*.vd.json` | [Glob pattern](https://bun.sh/docs/api/glob) to define which files are ViewDefinitions. |
 | `--template` | `-t` | `@csv` | Path to [template](#templates---template-parameter) to use when generating SQL. May be the name of a [sample template](#sample-templates) or the path to a [custom template](#custom-templates) |
 | `--schema-file` | `-s` | FHIR R4 Schema | Path to a FHIR schema generated using the script included at `./scripts/build-fhir-schema.js`. This can be used to execute ViewDefinitions against FHIR data from versions other than R4.  See the [Generating a FHIR Schema](#generating-a-fhir-schema) seciton below for details.|
-| `--param` | `-p` | | `name=value` pair of user defined variables to be used when generating SQL with a [custom template](#custom-templates). This argument may be repeated. | 
+| `--param` | | | `name=value` pair of user defined variables to be used when generating SQL with a [custom template](#custom-templates). This argument may be repeated. | 
 | `--verbose` | | false | Print debugging information to the console when running FlatQuack. |
 
 #### Modes (--mode parameter)
@@ -55,12 +55,12 @@ Additional steps if you would like to run scripts, unit tests or edit the projec
 ### Sample Templates
 | name | input | output |
 | --- | --- | --- |
-| [`@csv`](../templates/csv.sql) (default) | NDJSON FHIR Bulk Data files with a `.ndjson` extension and the resource type in the name | Flat CSV files with a header row |
-| [`@parquet`](../templates/parquet.sql) | NDJSON FHIR Bulk Data files with a `.ndjson` extension and the resource type in the name | Parquet files ready for additional processing |
-| [`@ndjson`](../templates/ndjson.sql) | NDJSON FHIR Bulk Data files with a `.ndjson` extension | NDJSON file with one line per output row and just the abstracted data|
-| [`@dbt_model`](../templates/dbt_model.sql) | DBT Source named `fhir_db` with tables named as FHIR resource types | SQL Select statement that returns a flat table |
-| [`@dbt_prehook`](../templates/dbt_prehook.sql) | NA | DuckDB SQL macros to load before executing a query generated with FlatQuack |
-| [`@explore`](../templates/explore.sql) (default for the `explore` mode) | NDJSON FHIR Bulk Data files with a `.ndjson` extension and the resource type in the name | Flattened table with up to 10 results |
+| [`@csv`](./templates/csv.sql) (default) | NDJSON FHIR Bulk Data files with a `.ndjson` extension and the resource type in the name | Flat CSV files with a header row |
+| [`@parquet`](./templates/parquet.sql) | NDJSON FHIR Bulk Data files with a `.ndjson` extension and the resource type in the name | Parquet files ready for additional processing |
+| [`@ndjson`](./templates/ndjson.sql) | NDJSON FHIR Bulk Data files with a `.ndjson` extension | NDJSON file with one line per output row and just the abstracted data|
+| [`@dbt_model`](./templates/dbt_model.sql) | DBT Source named `fhir_db` with tables named as FHIR resource types | SQL Select statement that returns a flat table |
+| [`@dbt_prehook`](./templates/dbt_prehook.sql) | NA | DuckDB SQL macros to load before executing a query generated with FlatQuack |
+| [`@explore`](./templates/explore.sql) (default for the `explore` mode) | NDJSON FHIR Bulk Data files with a `.ndjson` extension and the resource type in the name | Flattened table with up to 10 results |
 
 ### Custom Templates
 FlatQuack uses a very simple template language that replaces specific variables when they're placed between double brackets with values from the current execution (e.g., `{{ fq_input_dir }}`). Variable names and values not in the list below may be passed into the template processor using the `--param` command line argument and will be replaced if they appear they the template. This argument may also be used to pass in values that override the values of the built-in variables. Variables not in the list below or passed in as arguments will not be removed by the template engine to support their use in other processing steps such as DBT pipelines.
