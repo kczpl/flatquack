@@ -1,0 +1,134 @@
+{
+  "title": "custom - column nesting",
+  "resources": [{
+    "resourceType": "Patient",
+    "id": "pt1",
+    "contact": [{
+        "telecom": [{
+            "system": "phone",
+            "value": "123-456-7890"
+          }],
+        "name": {
+          "family": "FC1.1",
+          "given": ["N1", "N1`"]
+        }
+      },{
+        "telecom": [{
+          "system": "email"
+        }],
+        "name": {
+          "family": "FC1.2",
+          "given": ["N2"]
+        }
+      }]
+  }],
+  "tests": [{
+    "title": "column with missing top level array element",
+    "view": {
+      "resource": "Patient",
+      "select": [{
+        "column": [{"name": "id"}],
+        "select": [{
+          "forEachOrNull": "name",
+          "column": [{"name": "family"}]
+        }]
+      }]
+    },
+    "expect": [{
+      "id": "pt1",
+      "family": null
+    }]
+  },{
+    "title": "column with missing child array element (as a single forEach expression)",
+    "view": {
+      "resource": "Patient",
+      "select": [{
+        "column": [{"name": "id"}],
+        "select": [{
+          "forEachOrNull": "contact.relationship.coding",
+          "column": [{"name": "code"}]
+        }]
+      }]
+    },
+    "expect": [{
+      "id": "pt1",
+      "code": null
+    }]
+  },{
+    "title": "column with missing child array element (as multiple forEach expressions)",
+    "view": {
+      "resource": "Patient",
+      "select": [{
+        "column": [{"name": "id"}],
+        "select": [{
+          "forEachOrNull": "contact",
+          "select": [{
+            "forEachOrNull": "relationship",
+            "select": [{
+              "forEachOrNull": "coding",
+              "column": [{"name": "code"}]
+            }]
+          }]
+        }]
+      }]
+    },
+    "expect": [{
+      "id": "pt1",
+      "code": null
+    },{
+      "id": "pt1",
+      "code": null
+    }]
+  },{
+    "title": "column with missing child element",
+    "view": {
+      "resource": "Patient",
+      "select": [{
+        "column": [{"name": "id"}],
+        "select": [{
+          "forEachOrNull": "contact.name",
+          "column": [{"name": "use"}]
+        }]
+      }]
+    },
+    "expect": [{
+      "id": "pt1",
+      "use": null
+    },{
+      "id": "pt1",
+      "use": null
+    }]
+  },{
+    "title": "column with missing top level array element and where clause",
+    "view": {
+      "resource": "Patient",
+      "select": [{
+        "column": [{"name": "id"}],
+        "select": [{
+          "forEachOrNull": "name.where(use='usual')",
+          "column": [{"name": "family"}]
+        }]
+      }]
+    },
+    "expect": [{
+      "id": "pt1",
+      "family": null
+    }]
+  },{
+    "title": "column with missing child array element and where clause",
+    "view": {
+      "resource": "Patient",
+      "select": [{
+        "column": [{"name": "id"}],
+        "select": [{
+          "forEachOrNull": "contact.where(gender='male').relationship.coding",
+          "column": [{"name": "code"}]
+        }]
+      }]
+    },
+    "expect": [{
+      "id": "pt1",
+      "code": null
+    }]
+  }]
+}
